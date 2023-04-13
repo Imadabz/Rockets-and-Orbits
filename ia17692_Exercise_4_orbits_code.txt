@@ -1,0 +1,364 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Mar 05 12:01:01 2019
+
+@author: Imad
+"""
+
+# importing necessary packages:
+import numpy as np
+import matplotlib.pyplot as plt
+# one body problem functions for x and y
+def f1(vx):
+    return vx
+def f2(vy):
+    return vy
+def f3(x,y):
+    return -G*M*x/((x*x + y*y)**(3/2))
+def f4(x,y):
+    return -G*M*y/((x*x + y*y)**(3/2))
+# two body problem functions for x and y
+def f5(x,y):
+    RE = np.sqrt((x**2)+(y**2))
+    RM = np.sqrt((x**2)+(y**2 - 3.86e6)**2)
+    return ((-G*ME*x)/(RE**3)) - ((G*MM*x)/(RM**3)) 
+def f6(x,y):
+    RE = np.sqrt((x**2)+(y**2))
+    RM = np.sqrt((x**2)+(y**2 - 3.86e6)**2)
+    return (-G*ME*y)/(RE**3) - ((G*MM*(y-384e6))/(RM**3))
+# Menu for selecting different programs:
+print ("Hello and welcome to the Rocket Simulator.")
+print ("Fasten your seatbelts!")
+MyInput = '0'
+while MyInput != 'q':
+    print ("Please enter a choice")
+    print ("'a' for the orbit of the Apollo 11 Rocket around Earth,")
+    print (''''b' for the orbit of Europa around Jupiter,''')
+    print ("'c' for the orbit of Mercury,")
+    print ("'d' for the Apollo 11 Journey,")
+    print ("or 'q' to quit:")
+    MyInput = input()
+# Part a, orbit of ISS
+
+    if MyInput == 'a':
+        print('You have chosen part a,')
+        print('Houston we do not have a problem!')
+        print("Please wait a second")
+        # Defining constats and loop initialisations:
+        t = 0.1
+        x = 6.59e6
+        y = 0
+        vx = 0
+        vy = -7660
+        G = 6.67*10**(-11)
+        M = 5.972*10**24
+        a = 1
+        b = 500
+        n = 100
+        h = 100 # h constant, or step size
+        m = 28801
+        
+        ylist = []
+        xlist = []
+        vylist = []
+        vxlist = []
+        tlist = []
+        # Defining step equations:
+        while t < 10000000:
+            # Defining ODE constants to couple first:
+            #k1:
+            k1x = f1(vx)
+            k1y = f2(vy)
+            k1vx = f3(x,y)
+            k1vy = f4(x,y)
+            #k2:
+            k2x = f1(vx + h*k1vx/2)
+            k2y = f2(vy + h*k1vy/2)
+            k2vx = f3(x + h*k1x/2,y + h*k1y/2)
+            k2vy = f4(x + h*k1x/2,y + h*k1y/2)
+            #k3:
+            k3x = f1(vx +h*k2vx/2)
+            k3y = f2(vy +h*k2vy/2)
+            k3vx = f3(x + h*k2x/2,y + h*k2y/2)
+            k3vy = f4(x + h*k2x/2,y + h*k2y/2)
+            #k4:
+            k4x = f1(vx +h*k3vx)
+            k4y = f2(vy +h*k3vy)
+            k4vx = f3(x + h*k3x,y + h*k3y)
+            k4vy = f4(x + h*k3x,y + h*k3y)
+            
+            x += (h/6)*(k1x + 2*k2x + 2*k3x +k4x)
+            y += (h/6)*(k1y + 2*k2y + 2*k3y +k4y)
+            vx += (h/6)*(k1vx + 2*k2vx + 2*k3vx + k4vx)
+            vy += (h/6)*(k1vy + 2*k2vy + 2*k3vy + k4vy)
+            t += h
+            
+            
+            ylist.append(y)
+            xlist.append(x)
+            vylist.append(vy)
+            vxlist.append(vx)
+            tlist.append(t)
+        
+        
+        plt.title('Orbit of Apollo 11 around Earth')
+        plt.xlabel('x-position (m)')
+        plt.ylabel('y-position (m)')
+        plt.plot(xlist,ylist, '-g')
+        plt.savefig('myfig1.png', dpi=1200)
+        plt.show()
+        print ()
+        print ( )
+        continue
+
+# Part b, orbit of Europa 
+
+    if MyInput == 'b':
+        print('You have chosen part b,')
+        print('Launching in T minus 10!')
+        print("Please wait a second")
+        # Defining constats and loop initialisations:
+        t = 0.1
+        x = 670900000
+        y = 0
+        vx = 0
+        vy = 13740
+        G = 6.67*10**(-11)
+        M = 1.898e27
+        a = 1
+        b = 500
+        n = 100
+        h = 3600 # h constant, or step size
+        
+        ylist = []
+        xlist = []
+        vylist = []
+        vxlist = []
+        tlist = []
+        # Defining step equations:
+        while t < 3e9:
+            # Defining ODE constants to couple first:
+            #k1:
+            k1x = f1(vx)
+            k1y = f2(vy)
+            k1vx = f3(x,y)
+            k1vy = f4(x,y)
+            #k2:
+            k2x = f1(vx + h*k1vx/2)
+            k2y = f2(vy + h*k1vy/2)
+            k2vx = f3(x + h*k1x/2,y + h*k1y/2)
+            k2vy = f4(x + h*k1x/2,y + h*k1y/2)
+            #k3:
+            k3x = f1(vx +h*k2vx/2)
+            k3y = f2(vy +h*k2vy/2)
+            k3vx = f3(x + h*k2x/2,y + h*k2y/2)
+            k3vy = f4(x + h*k2x/2,y + h*k2y/2)
+            #k4:
+            k4x = f1(vx +h*k3vx)
+            k4y = f2(vy +h*k3vy)
+            k4vx = f3(x + h*k3x,y + h*k3y)
+            k4vy = f4(x + h*k3x,y + h*k3y)
+            
+            x +=  (h/6)*(k1x + 2*k2x + 2*k3x +k4x)
+            y += (h/6)*(k1y + 2*k2y + 2*k3y +k4y)
+            vx +=  (h/6)*(k1vx + 2*k2vx + 2*k3vx + k4vx)
+            vy +=  (h/6)*(k1vy + 2*k2vy + 2*k3vy + k4vy)
+            t +=  h
+            
+            ylist.append(y)
+            xlist.append(x)
+            vylist.append(vy)
+            vxlist.append(vx)
+            tlist.append(t)
+        
+        print(f'y[0]: {ylist[0]:.5f} x[0]: {xlist[0]:.5f}')
+        plt.title('''Orbit of Europa around Jupiter''')
+        plt.xlabel('x-position (m)')
+        plt.ylabel('y-position (m)')
+        plt.plot(xlist,ylist, '-b')
+        plt.savefig('myfig2.png', dpi=1200)
+        plt.show()
+        print ( )
+        print ( )
+        continue
+    
+# Part c, orbit of Mercury
+
+    if MyInput == 'c':
+        print('You have chosen part c,')
+        print('Houston we do not have a problem!')
+        print("Please wait a second")
+        # Defining constats and loop initialisations:
+        t = 0.1
+        x = 57.91e9
+        y = 0
+        vx = 0
+        vy = -47400
+        G = 6.67*10**(-11)
+        M = 1.989*10**30
+        a = 1
+        b = 500
+        n = 100
+        h = 100 # h constant, or step size
+        
+        ylist = []
+        xlist = []
+        vylist = []
+        vxlist = []
+        tlist = []
+        # Defining step equations:
+        while t < 5.3e6:
+            # Defining ODE constants to couple first:
+            #k1:
+            k1x = f1(vx)
+            k1y = f2(vy)
+            k1vx = f3(x,y)
+            k1vy = f4(x,y)
+            #k2:
+            k2x = f1(vx + h*k1vx/2)
+            k2y = f2(vy + h*k1vy/2)
+            k2vx = f3(x + h*k1x/2,y + h*k1y/2)
+            k2vy = f4(x + h*k1x/2,y + h*k1y/2)
+            #k3:
+            k3x = f1(vx +h*k2vx/2)
+            k3y = f2(vy +h*k2vy/2)
+            k3vx = f3(x + h*k2x/2,y + h*k2y/2)
+            k3vy = f4(x + h*k2x/2,y + h*k2y/2)
+            #k4:
+            k4x = f1(vx +h*k3vx)
+            k4y = f2(vy +h*k3vy)
+            k4vx = f3(x + h*k3x,y + h*k3y)
+            k4vy = f4(x + h*k3x,y + h*k3y)
+            
+            x = x + (h/6)*(k1x + 2*k2x + 2*k3x +k4x)
+            y = y + (h/6)*(k1y + 2*k2y + 2*k3y +k4y)
+            vx = vx + (h/6)*(k1vx + 2*k2vx + 2*k3vx + k4vx)
+            vy = vy + (h/6)*(k1vy + 2*k2vy + 2*k3vy + k4vy)
+            t = t + h
+            
+            ylist.append(y)
+            xlist.append(x)
+            vylist.append(vy)
+            vxlist.append(vx)
+            tlist.append(t)
+        
+  
+        plt.title('Orbit of Mercury around Sun')
+        plt.xlabel('x-position (m)')
+        plt.ylabel('y-position (m)')
+        plt.plot(xlist,ylist, '-r')
+        plt.savefig('myfig3.png', dpi=1200)
+        plt.show()
+        print ( )
+        print ( )
+        continue
+    
+# Part d, orbit of rocket around moon
+
+    if MyInput == 'd':
+        print('You have chosen part d,')
+        print('One small step for Python, one giant leap for Python-kind!')
+        print("Please wait a second")
+        # Defining constats and loop initialisations:
+        t = 0.1
+        x = 0.1
+        y = 7000000
+        vx = 1100
+        vy = 0.1
+        G = 6.67e-11
+        ME = 5.972e24
+        MM = 7.3476810e22
+        M = 28801
+        h = 1 # h constant, or step size
+        ke = 0
+        pe = 0
+        ylist = []
+        xlist = []
+        vylist = []
+        vxlist = []
+        tlist = []
+        TE = []
+        PE = []
+        KE = []
+        # Defining step equations:
+        while t < 1200:
+            # Defining ODE constants to couple first:
+            #k1:
+            k1x = f1(vx)
+            k1y = f2(vy)
+            k1vx = f5(x,y)
+            k1vy = f6(x,y)
+            #k2:
+            k2x = f1(vx + h*k1vx/2)
+            k2y = f2(vy + h*k1vy/2)
+            k2vx = f5(x + h*k1x/2,y + h*k1y/2)
+            k2vy = f6(x + h*k1x/2,y + h*k1y/2)
+            #k3:
+            k3x = f1(vx +h*k2vx/2)
+            k3y = f2(vy +h*k2vy/2)
+            k3vx = f5(x + h*k2x/2,y + h*k2y/2)
+            k3vy = f6(x + h*k2x/2,y + h*k2y/2)
+            #k4:
+            k4x = f1(vx +h*k3vx)
+            k4y = f2(vy +h*k3vy)
+            k4vx = f5(x + h*k3x,y + h*k3y)
+            k4vy = f6(x + h*k3x,y + h*k3y)
+            
+            ke += 0.5*M*(vx**2 + vy**2)
+            pe += -G*ME*M/(x*x + y*y)**1/2
+            
+            x += (h/6)*(k1x + 2*k2x + 2*k3x +k4x)
+            y += (h/6)*(k1y + 2*k2y + 2*k3y +k4y)
+            vx += (h/6)*(k1vx + 2*k2vx + 2*k3vx + k4vx)
+            vy += (h/6)*(k1vy + 2*k2vy + 2*k3vy + k4vy)
+            t += h
+            # adding values to lists to be plotted and graphed 
+            ylist.append(y)
+            xlist.append(x)
+            vylist.append(vy)
+            vxlist.append(vx)
+            tlist.append(t)
+            
+            PE.append(pe)
+            KE.append(ke)
+            TE.append(pe + ke)
+        # energy conseration plots
+        plt.title('Plots of Energy Against Time')
+        plt.xlabel('Time (s)')
+        plt.ylabel('Energy (J)')
+        plt.plot(tlist, KE, 'r')
+        plt.plot(tlist, PE, 'b')
+        plt.plot(tlist, TE, 'g')
+        plt.savefig('myfig4.png', dpi=1200)
+        plt.show()
+        print('Red is KE, Blue is PE and Green is Total Energy.')
+        
+        # route plotting
+        plt.title('Journey of Rocket')
+        plt.xlabel('x-position (m)')
+        plt.ylabel('y-position (m)')
+        plt.plot(xlist,ylist, '-r')
+        plt.ylim((-1e6, 8e6))
+        plt.savefig('myfig5.png', dpi=1200)
+        plt.show()
+        # animation plotting
+        Earth = plt.Circle((0, 0), 6378000, color ='Blue', label = 'Earth')
+        Moon = plt.Circle((0, 384e6), 1737000, color ='black', label='Moon')
+        plt.gcf().add_artist(Earth)
+        plt.gcf().add_artist(Moon)
+        plt.plot(xlist, ylist, color='Green', label='Journey')
+        plt.legend(loc='lower right')
+        plt.xlabel('x-position (m)')
+        plt.ylabel('y-position (m)')
+        plt.ylim((3.5e8, 4e8))
+        plt.xlim((-0.2e8,0.2e8))
+        plt.grid()
+        plt.show()
+        plt.savefig('myfig6.png', dpi=1200)
+        continue
+    elif MyInput != 'q':
+        print('This is not a valid choice')
+        continue
+
+
+print('You have chosen to finish - good day!')
